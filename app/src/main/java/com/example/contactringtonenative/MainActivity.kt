@@ -1,15 +1,17 @@
 package com.example.contactringtonenative
 
+import android.content.Context
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
+import co.quis.flutter_contacts.FlutterContacts
 import com.example.contactringtonenative.databinding.ActivityMainBinding
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,6 +20,23 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        println("import kotlin flutter")
+
+        var contacts_get = FlutterContacts.select(
+            resolver = applicationContext.ContentReslover,
+            withProperties=false,
+            withThumbnail = false,
+            withPhoto = false,
+            withGroups = false,
+            withAccounts = false,
+            returnUnifiedContacts = true,
+            includeNonVisible = false
+        )
+
+        println("contacts get result ::: " + contacts_get)
+
+
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
