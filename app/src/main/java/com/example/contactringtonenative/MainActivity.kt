@@ -1,6 +1,5 @@
 package com.example.contactringtonenative
 
-import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -9,34 +8,33 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import co.quis.flutter_contacts.FlutterContacts
 import com.example.contactringtonenative.databinding.ActivityMainBinding
 import com.google.android.material.snackbar.Snackbar
+
+import android.database.Cursor
+
+
+import com.example.contactringtonenative.ContactUpdater
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         println("import kotlin flutter")
 
-        var contacts_get = FlutterContacts.select(
-            resolver = applicationContext.ContentReslover,
-            withProperties=false,
-            withThumbnail = false,
-            withPhoto = false,
-            withGroups = false,
-            withAccounts = false,
-            returnUnifiedContacts = true,
-            includeNonVisible = false
-        )
+//        ContactUpdater().getBrowserHist(getApplicationContext())
 
-        println("contacts get result ::: " + contacts_get)
+        ContactUpdater().listMusic(this)
 
-
+        var mContacts: Cursor
+        var mEmail: Cursor
+        var selectedContactId: Int
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
