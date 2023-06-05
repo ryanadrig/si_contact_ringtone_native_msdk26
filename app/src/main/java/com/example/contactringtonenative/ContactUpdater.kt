@@ -8,19 +8,16 @@ import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import android.os.Environment
-import android.provider.ContactsContract
-import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.stream.Collectors
+import kotlin.io.path.pathString
 
 
 class ContactUpdater {
@@ -29,16 +26,19 @@ class ContactUpdater {
 
     var REQUEST_ID_MULTIPLE_PERMISSIONS = 1
 
-    private fun checkAndRequestPermissions(call_context: Context,
-                                            call_activity: AppCompatActivity): Boolean {
+    private fun checkAndRequestPermissions(call_activity: AppCompatActivity): Boolean {
         val readExternal =
-            ContextCompat.checkSelfPermission(call_context, Manifest.permission.READ_EXTERNAL_STORAGE)
+            ContextCompat.checkSelfPermission(call_activity.applicationContext, Manifest.permission.READ_EXTERNAL_STORAGE)
         val writeExternal =
-            ContextCompat.checkSelfPermission(call_context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            ContextCompat.checkSelfPermission(call_activity.applicationContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         val readContacts =
-            ContextCompat.checkSelfPermission(call_context, Manifest.permission.READ_CONTACTS)
+            ContextCompat.checkSelfPermission(call_activity.applicationContext, Manifest.permission.READ_CONTACTS)
         val writeContacts =
-            ContextCompat.checkSelfPermission(call_context, Manifest.permission.WRITE_CONTACTS)
+            ContextCompat.checkSelfPermission(call_activity.applicationContext, Manifest.permission.WRITE_CONTACTS)
+
+        val readMedia =
+            ContextCompat.checkSelfPermission(call_activity.applicationContext, Manifest.permission.READ_MEDIA_AUDIO)
+
         val listPermissionsNeeded: MutableList<String> = ArrayList()
         if (readExternal != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -52,6 +52,12 @@ class ContactUpdater {
         if (writeContacts != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.WRITE_CONTACTS)
         }
+
+        // Api level 31 and above which is pretty new
+        if (readMedia != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_MEDIA_AUDIO)
+        }
+
         if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(
                 call_activity,
@@ -63,11 +69,116 @@ class ContactUpdater {
         return true
     }
 
-    fun listMusic(call_activity: AppCompatActivity){
+
+
+    // build ringtone list
+    var brt_list : ArrayList<Map<String, String>> = ArrayList()
+
+    // ms_path music search path, rtt ring tone type : "default" or "audio"
+    // Builds array of paths and type [{"path":"/expath", "type": "default"}, ...
+    fun lookForMusicFiles(ms_path: String, rtt: String){
+        println("looking in " + ms_path + " for music files")
+        val fileDirMap =
+            Files.list( Paths.get(ms_path) )
+                .collect(Collectors.partitioningBy( { it -> Files.isDirectory(it)}))
+        fileDirMap[false]?.forEach {
+            println(it.fileName)
+            var list_item : Map<String,String>
+            list_item = mapOf("path" to ms_path + "/" + it.fileName, "type" to "audio")
+            if (ms_path.contains("ringtone") || ms_path.contains("Ringtone")){
+                list_item = mapOf("path" to ms_path + "/" + it.fileName, "type" to "default")
+            }
+            brt_list.add(list_item)
+
+        }
+        fileDirMap[true]?.forEach {
+            println(it.fileName)
+        }
+    }
+
+    fun getRealPathFromUri(context: Context, contentUri: Uri?): String? {
+        var cursor: Cursor? = null
+        return try {
+            val proj = arrayOf(MediaStore.Images.Media.DATA)
+            cursor = context.getContentResolver()
+                .query(contentUri!!, proj, null, null, null)
+            val column_index: Int = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+            cursor!!.moveToFirst()
+//            val real_path : String = cursor!!.getString(column_index)
+        return "null"
+        } finally {
+            if (cursor != null) {
+                cursor.close()
+            }
+        }
+    }
+
+    fun query_audio_ms(call_activity: AppCompatActivity){
+        println("get files from mediaquery")
+
+        println("mediaquery ext cont uri ~ ")
+        println(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)
+
+//        val query_uri_str = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+        val query_uri_str = "content://storage/emulated/0/Music"
+        val query_uri : Uri = Uri.parse(query_uri_str)
+        val projection = arrayOf(
+            MediaStore.Audio.Media.TITLE
+//            MediaStore.Audio.Media.ALBUM
+//                    MediaStore.Audio.Media._ID,
+//            MediaStore.Audio.Media.DISPLAY_NAME
+        )
+
+        val selection = null //not filtering out any row.
+        val selectionArgs = null //this can be null because selection is also null
+        val sortOrder = null
+
+        call_activity.applicationContext.contentResolver.query(
+            query_uri,
+            projection,
+            selection,
+            selectionArgs,
+            sortOrder
+        )?.use { cursor ->
+
+            val titleColIndex = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)
+//            val albumColIndex = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)
+
+            Log.d("MediaQuery Result ~ ", "Query found ${cursor.count} rows")
+
+            while (cursor.moveToNext()) {
+                val title = cursor.getString(titleColIndex)
+//                val album = cursor.getString(albumColIndex)
+
+//                Log.d("MediaQuery Result ~ ", "$title - $album")
+                Log.d("MediaQuery Result ~ ", "$title ")
+            }
+        }
+    }
+
+// Default ringtones folder /system/media/audio/ringtones
+
+    fun listMusic(call_activity: AppCompatActivity
+                  ){
+        println("Get files from default ringtones folder")
+        val def_ringtones_path : String = "/system/media/audio/ringtones"
+
+
+
+        checkAndRequestPermissions(call_activity)
+
+        query_audio_ms(call_activity)
+
+
+        lookForMusicFiles(def_ringtones_path, "default")
+
+
 
         println("Get files in external storage state dir ~ ")
-        println(Environment.getExternalStorageDirectory().getPath())
-        val ess_path : Path = Paths.get(Environment.getExternalStorageDirectory().getPath())
+        val ess_path_str = Environment.getExternalStorageDirectory().getPath()
+        println(ess_path_str)
+
+        val ess_path : Path = Paths.get(ess_path_str)
 
         if (Files.isDirectory(ess_path)){
             //List all items in the directory. Note that we are using Java 8 streaming API to group the entries by
@@ -76,10 +187,26 @@ class ContactUpdater {
 
             println("Directories")
             //Print out all of the directories
-            fileDirMap[true]?.forEach { it -> println(it.fileName) }
+            fileDirMap[true]?.forEach {
+                        println(it.fileName)
+                    if (it.fileName.pathString == "Music"){
+                                println("found music folder")
+                            lookForMusicFiles(ess_path_str + "/Music", "audio")
+                    }
+                if (it.fileName.pathString == "Ringtones"){
+                    println("found ringtones folder")
+                    lookForMusicFiles(ess_path_str + "/Ringtones", "default")
+                }
+
+                if (it.fileName.pathString == "Download"){
+                    println("found downloads folder")
+                    lookForMusicFiles(ess_path_str + "/Download", "audio")
+                }
+                      }
 
             println("\nFiles")
             println("%-20s\tRead\tWrite\tExecute".format("Name"))
+
             //Print out all files and attributes
             fileDirMap[false]?.forEach( {it ->
                 println("%-20s\t%-5b\t%-5b\t%b".format(
@@ -91,6 +218,9 @@ class ContactUpdater {
         } else {
             println("Enter a directory")
         }
+
+        println("final brt list ~ " )
+        println(brt_list)
 
 //        val selection = MediaStore.Audio.Media.IS_MUSIC + " != 0"
 //
