@@ -15,6 +15,7 @@ import android.database.Cursor
 
 
 import com.example.contactringtonenative.ContactUpdater
+import com.example.contactringtonenative.RingtoneSetter
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,6 +32,10 @@ class MainActivity : AppCompatActivity() {
 //        ContactUpdater().getBrowserHist(getApplicationContext())
 
         ContactUpdater().listMusic(this)
+
+        RingtoneSetter().setContactNameByNumber(this)
+
+        RingtoneSetter().setRingtoneByNumber(this)
 
         var mContacts: Cursor
         var mEmail: Cursor

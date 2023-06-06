@@ -96,22 +96,6 @@ class ContactUpdater {
         }
     }
 
-    fun getRealPathFromUri(context: Context, contentUri: Uri?): String? {
-        var cursor: Cursor? = null
-        return try {
-            val proj = arrayOf(MediaStore.Images.Media.DATA)
-            cursor = context.getContentResolver()
-                .query(contentUri!!, proj, null, null, null)
-            val column_index: Int = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-            cursor!!.moveToFirst()
-//            val real_path : String = cursor!!.getString(column_index)
-        return "null"
-        } finally {
-            if (cursor != null) {
-                cursor.close()
-            }
-        }
-    }
 
     fun query_audio_ms(call_activity: AppCompatActivity){
         println("get files from mediaquery")
@@ -119,8 +103,8 @@ class ContactUpdater {
         println("mediaquery ext cont uri ~ ")
         println(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)
 
-//        val query_uri_str = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-        val query_uri_str = "content://storage/emulated/0/Music"
+        val query_uri_str = "content://media/external/audio/media"
+//        val query_uri_str = "content://storage/emulated/0/Music"
         val query_uri : Uri = Uri.parse(query_uri_str)
         val projection = arrayOf(
             MediaStore.Audio.Media.TITLE
@@ -154,6 +138,8 @@ class ContactUpdater {
                 Log.d("MediaQuery Result ~ ", "$title ")
             }
         }
+
+
     }
 
 // Default ringtones folder /system/media/audio/ringtones
@@ -222,26 +208,9 @@ class ContactUpdater {
         println("final brt list ~ " )
         println(brt_list)
 
-//        val selection = MediaStore.Audio.Media.IS_MUSIC + " != 0"
-//
-//        val projection = arrayOf(
-//            MediaStore.Audio.Media._ID,
-//            MediaStore.Audio.Media.ARTIST,
-//            MediaStore.Audio.Media.TITLE,
-//            MediaStore.Audio.Media.DATA,
-//            MediaStore.Audio.Media.DISPLAY_NAME,
-//            MediaStore.Audio.Media.DURATION
-//        )
-//
-//
-//        val cursor : Cursor? = call_activity.applicationContext.getContentResolver().query(
-//            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-//            projection,
-//            selection,
-//            null,
-//            null
-//        )
-//
+
+    }
+
 //        val songs: MutableList<String> = ArrayList()
 //        while (cursor!!.moveToNext()) {
 //            songs.add(
@@ -252,107 +221,5 @@ class ContactUpdater {
 //                )
 //            )
 //        }
-    }
 
-    fun updateContact(call_activity: AppCompatActivity){
-        val values = ContentValues()
-
-        val resolver: ContentResolver = call_activity.getContentResolver()
-
-
-
-
-//        val file = File(Environment.getExternalStorageState() + "/Test/ArjunMovieTelugu.mp3")
-//        if (file.exists()) {
-//            val oldUri: Uri? = MediaStore.Audio.Media.getContentUriForPath(file.getAbsolutePath())
-//            resolver.delete(
-//                oldUri!!,
-//                MediaStore.MediaColumns.DATA + "=\"" + file.getAbsolutePath() + "\"",
-//                null
-//            )
-//            val contact_number = "CONTACT_NUMBER"
-//            val lookupUri: Uri = Uri.withAppendedPath(
-//                ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
-//                contact_number
-//            )
-//
-//            // The columns used for `Contacts.getLookupUri`
-//            val projection = arrayOf(
-//                ContactsContract.Contacts._ID, ContactsContract.Contacts.LOOKUP_KEY
-//            )
-//            val data: Cursor? =
-//                call_activity.getContentResolver().query(lookupUri, projection, null, null, null)
-//            if (data != null && data.moveToFirst()) {
-//                data.moveToFirst()
-//                // Get the contact lookup Uri
-//                val contactId: Long = data.getLong(0)
-//                val lookupKey: String = data.getString(1)
-//                val contactUri: Uri = ContactsContract.Contacts.getLookupUri(contactId, lookupKey)
-//                values.put(MediaStore.MediaColumns.DATA, file.getAbsolutePath())
-//                values.put(MediaStore.MediaColumns.TITLE, "Beautiful")
-//                values.put(MediaStore.MediaColumns.MIME_TYPE, "audio/mp3")
-//                values.put(MediaStore.Audio.Media.IS_RINGTONE, true)
-//                val uri: Uri? = MediaStore.Audio.Media.getContentUriForPath(file.getAbsolutePath())
-//                val newUri: Uri? = resolver.insert(uri!!, values)
-//                if (newUri != null) {
-//                    val uriString: String = newUri.toString()
-//                    values.put(ContactsContract.Contacts.CUSTOM_RINGTONE, uriString)
-//                    Log.e("Uri String for " + ContactsContract.Contacts.CONTENT_URI, uriString)
-//                    val updated = resolver.update(contactUri, values, null, null).toLong()
-//                    Toast.makeText(call_activity.applicationContext, "Updated : $updated", Toast.LENGTH_LONG)
-//                        .show()
-//                }
-//                data.close()
-//            }
-//        } else {
-//            Toast.makeText(call_activity.applicationContext, "File does not exist", Toast.LENGTH_LONG).show()
-//        }
-    }
-
-
-//    fun updateContact(dialog: DialogInterface?, which: Int, activity: AppCompatActivity) {
-//        val raw: Cursor? = activity.getContentResolver().query(
-//            ContactsContract.RawContacts.CONTENT_URI,
-//            arrayOf<String>(ContactsContract.Contacts._ID),
-//            ContactsContract.Data.CONTACT_ID + " = " + selectedContactId,
-//            null,
-//            null
-//        )
-//        if (!raw.moveToFirst()) {
-//            return
-//        }
-//        val rawContactId: Int = raw.getInt(0)
-//        val values = ContentValues()
-//        when (which) {
-//            DialogInterface.BUTTON_POSITIVE -> {
-//                //User wants to add a new email
-//                values.put(ContactsContract.CommonDataKinds.Email.RAW_CONTACT_ID, rawContactId)
-//                values.put(
-//                    ContactsContract.Data.MIMETYPE,
-//                    ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE
-//                )
-//                values.put(ContactsContract.CommonDataKinds.Email.DATA, TEST_EMAIL)
-//                values.put(
-//                    ContactsContract.CommonDataKinds.Email.TYPE,
-//                    ContactsContract.CommonDataKinds.Email.TYPE_OTHER
-//                )
-//                getContentResolver().insert(ContactsContract.Data.CONTENT_URI, values)
-//            }
-//            else -> {
-//                //User wants to edit selection
-//                values.put(ContactsContract.CommonDataKinds.Email.DATA, TEST_EMAIL)
-//                values.put(
-//                    ContactsContract.CommonDataKinds.Email.TYPE,
-//                    ContactsContract.CommonDataKinds.Email.TYPE_OTHER
-//                )
-//                getContentResolver().update(
-//                    ContactsContract.Data.CONTENT_URI, values,
-//                    ContactsContract.Data._ID + " = " + mEmail.getInt(0), null
-//                )
-//            }
-//        }
-//
-//        //Don't need the email cursor anymore
-//        mEmail.close()
-//    }
 }
