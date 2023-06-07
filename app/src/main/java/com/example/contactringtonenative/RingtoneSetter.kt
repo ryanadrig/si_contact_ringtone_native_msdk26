@@ -71,11 +71,70 @@ class RingtoneSetter {
             cursor.close()
 
             try {
+
+                // no access plus reverse content from song name giving different location if it's in two places
 //                resolver.delete(
 //                    oldUriTEST!!,
 //                    MediaStore.MediaColumns.DATA + "='" + TESTOldFile + "'",
 //                    null
 //                )
+                // better to check if it's in contact already then duplicate it into the netherworld
+
+
+
+                println("start all column lookup")
+                // suggested projection ???
+//                val PROJECTION: Array<out String> = arrayOf(
+//                    ContactsContract.Data._ID,
+//                    ContactsContract.Data.MIMETYPE,
+//                    ContactsContract.Data.DATA1,
+//                    ContactsContract.Data.DATA2,
+//                    ContactsContract.Data.DATA3,
+//                    ContactsContract.Data.DATA4,
+//                    ContactsContract.Data.DATA5,
+//                    ContactsContract.Data.DATA6,
+//                    ContactsContract.Data.DATA7,
+//                    ContactsContract.Data.DATA8,
+//                    ContactsContract.Data.DATA9,
+//                    ContactsContract.Data.DATA10,
+//                    ContactsContract.Data.DATA11,
+//                    ContactsContract.Data.DATA12,
+//                    ContactsContract.Data.DATA13,
+//                    ContactsContract.Data.DATA14,
+//                    ContactsContract.Data.DATA15
+//                )
+
+//ContactsContract.Contacts.CONTENT_URI
+
+                val contact_number = "4445555"
+                val lookupUri = Uri.withAppendedPath(
+                    ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
+                    contact_number
+                )
+
+                // The columns used for `Contacts.getLookupUri`
+                val projection = arrayOf(
+                    ContactsContract.Contacts._ID,
+                    ContactsContract.Contacts.LOOKUP_KEY,
+                    ContactsContract.Contacts.CUSTOM_RINGTONE
+                )
+                println("Start all contact resolver query")
+                val data: Cursor? = resolver.query( lookupUri,
+                    projection
+                    , null, null, null, null)
+
+                println("check all contact proj data")
+                if (data != null){
+                    println("loop contact datas")
+                    var col_idx = 0
+                    data.moveToFirst()
+                    for (di in data.columnNames){
+                        println("data col name ~ " + di)
+
+                        println("Data col val ~ " + data.getString(col_idx))
+                        col_idx += 1
+                    }
+                }
             }
             catch(e: Exception){
                 println("exception deleting test ~ " + e.printStackTrace())
@@ -112,6 +171,7 @@ class RingtoneSetter {
 
                     println("Uri String for Contact " + ContactsContract.Contacts.CONTENT_URI )
                     val contactUri = ContactsContract.Contacts.getLookupUri(contactId, lookupKey)
+
                     values.put(MediaStore.MediaColumns.DATA, file.absolutePath)
                     values.put(MediaStore.MediaColumns.TITLE, "RussianCircles CTITLE")
                     values.put(MediaStore.MediaColumns.MIME_TYPE, "audio/mp3")
@@ -125,10 +185,10 @@ class RingtoneSetter {
                     if (newUri != null) {
                         val uriString = newUri.toString()
 
-                        // Making duplicates for now 
-//                        values.put(ContactsContract.Contacts.CUSTOM_RINGTONE, uriString)
+                        // Making duplicates for now
+                        values.put(ContactsContract.Contacts.CUSTOM_RINGTONE, uriString)
                         println("Uri String for Media " + uriString)
-//                        val updated = resolver.update(contactUri, values, null, null).toLong()
+                        val updated = resolver.update(contactUri, values, null, null).toLong()
 
 
                     }
@@ -164,10 +224,12 @@ class RingtoneSetter {
         val projection = arrayOf(
             ContactsContract.Contacts._ID, ContactsContract.Contacts.LOOKUP_KEY
         )
-        val data: Cursor? = resolver.query(lookupUri, projection, null, null, null)
+        val data: Cursor? = resolver.query(lookupUri
+            , projection, null, null, null)
+
         if (data != null && data.moveToFirst()) {
 
-            println("found contact ")
+            println("found contact all proj data ")
             data.moveToFirst()
             // Get the contact lookup Uri
             val contactId = data.getLong(0)
