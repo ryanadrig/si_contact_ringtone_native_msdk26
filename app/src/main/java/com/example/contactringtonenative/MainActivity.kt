@@ -13,9 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 
 import android.database.Cursor
 
-
-import com.example.contactringtonenative.ContactUpdater
-import com.example.contactringtonenative.RingtoneSetter
+import com.example.contactringtonenative.RintoneSetter2
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,11 +29,12 @@ class MainActivity : AppCompatActivity() {
 
 //        ContactUpdater().getBrowserHist(getApplicationContext())
 
-        ContactUpdater().listMusic(this)
+//        RingtoneMediaUtil().listMusic(this)
 
-        RingtoneSetter().setContactNameByNumber(this)
+//        ContactUpdater().setContactNameByNumber(this)
 
-        RingtoneSetter().setRingtoneByNumber(this)
+        RintoneSetter2().setRingtoneByNumber(this)
+
 
         var mContacts: Cursor
         var mEmail: Cursor
