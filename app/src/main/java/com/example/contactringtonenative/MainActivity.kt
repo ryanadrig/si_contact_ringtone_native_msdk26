@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
 //        ContactUpdater().getBrowserHist(getApplicationContext())
 
-//        RingtoneMediaUtil().listMusic(this)
+        RingtoneMediaUtil().listMusic(this)
 
 //        ContactUpdater().setContactNameByNumber(this)
 
