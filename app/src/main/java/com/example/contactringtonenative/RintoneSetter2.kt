@@ -2,11 +2,7 @@ package com.example.contactringtonenative
 
 import android.content.*
 import android.database.Cursor
-import android.media.RingtoneManager
 import android.net.Uri
-import android.os.Build
-import android.os.Environment
-import android.os.FileUtils
 import android.provider.ContactsContract
 import android.provider.ContactsContract.Contacts
 import android.provider.MediaStore
@@ -84,43 +80,8 @@ class RintoneSetter2 {
             if (rt_data!!.count > 0) {
                 println("rtct ~" + rt_data!!.count.toString())
                 rt_data!!.moveToFirst()
-                var rtd_ii = 0
-                while (rtd_ii < rt_data.count) {
-                    println("rt data not null")
-                    var col_idx = 0;
-                    for (col in rt_data.columnNames) {
+                loopCurse(rt_data)
 
-                        val columnKey: String = rt_data.getColumnName(col_idx)
-                        println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-                        println("RT Column name ~ " + columnKey)
-                        val rtt = rt_data.getType(col_idx)
-                        println("get col type ~ " + rtt.toString())
-                        if (rtt == 0) {
-                            val rtv = "null"
-                            println("rt val ~ " + rtv)
-                        }
-                        if (rtt == 1) {
-                            val rtv = rt_data.getInt(col_idx)
-                            println("rt val ~ " + rtv.toString())
-                        }
-                        if (rtt == 2) {
-                            val rtv = rt_data.getFloat(col_idx)
-                            println("rt val ~ " + rtv.toString())
-                        }
-                        if (rtt == 3) {
-                            val rtv = rt_data.getString(col_idx)
-                            println("rt val ~ " + rtv)
-                        }
-                        if (rtt == 4) {
-                            val rtv = rt_data.getBlob(col_idx)
-                            println("rt val ~ " + rtv.toString())
-                    }
-                            println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-                            col_idx += 1
-                        }
-                        rtd_ii++
-                        rt_data.moveToNext()
-                    }
                 }
                 rt_data!!.close()
             }
@@ -156,41 +117,44 @@ class RintoneSetter2 {
                 println(" got contact lookup URI ~ " + contactUri.toString())
                 println("update media file uri ~ " + fContUri.toString())
 
-//                val mf_projection = arrayOf(
-//                    MediaStore.MediaColumns._ID,
-//                )
-//
-//                // get media string uri
+
+
+                val mf_projection = arrayOf(
+                    MediaStore.MediaColumns._ID,
+                    MediaStore.MediaColumns.DISPLAY_NAME,
+                    MediaStore.MediaColumns.DATA
+                )
+
+                // get media string uri
 //                val gmsuri = mediaUri.toString() + "/" + "exc_ogg.ogg"
-//
-//                val mf_data: Cursor? = resolver.query(
-//                    mediaUri!! + "/",
-//                    mf_projection, null, null, null
-//                )
-//                if (mf_data != null && mf_data.moveToFirst()) {
-//
-//                    mf_data.moveToFirst()
-//                    val mft = mf_data.getType(0)
-//                    println("got mftype ~ " + mft.toString())
-//
-//                    if (mft == 1) {
-//                        val mid = ct_data.getLong(0)
-//                        println("got mid ~ " + mid.toString())
-//                    }
-//                }
+
+                val mf_data: Cursor? = resolver.query(
+                    fContUri,
+                    mf_projection, null, null, null
+                )
+                if (mf_data != null && mf_data.moveToFirst()) {
+
+                    mf_data.moveToFirst()
+                    println("loop media content media field data")
+                    loopCurse(mf_data)
+                }
 
 
-                val media_values: ContentValues = ContentValues()
-
-                media_values.put(MediaStore.MediaColumns.DATA, fpath)
-                media_values.put(MediaStore.MediaColumns.TITLE, "Exc 104")
-                media_values.put(MediaStore.MediaColumns.DISPLAY_NAME, "Exc DDD")
-                media_values.put(MediaStore.MediaColumns.MIME_TYPE, getMIMEType(fpath))
+//                val media_values: ContentValues = ContentValues()
+//                media_values.put(MediaStore.MediaColumns.DATA, fpath)
+//                media_values.put(MediaStore.MediaColumns.TITLE, "Exc 105")
+//                media_values.put(MediaStore.MediaColumns.DISPLAY_NAME, "Exc DDD")
+//                media_values.put(MediaStore.MediaColumns.MIME_TYPE, getMIMEType(fpath))
+//                media_values.put(MediaStore.MediaColumns.SIZE, file.length())
+//                media_values.put(MediaStore.Audio.Media.IS_NOTIFICATION, true)
+//                media_values.put(MediaStore.Audio.Media.IS_ALARM, true)
+//                media_values.put(MediaStore.Audio.Media.IS_MUSIC, false)
 ////                media_values.put(MediaStore.MediaColumns.BITRATE, 160000)
 ////                media_values.put(MediaStore.MediaColumns._ID, 666)
 ////                media_values.put(MediaStore.MediaColumns.XMP, Blob())
 ////                media_values.put(MediaStore.MediaColumns.SIZE, 6666666)
-                media_values.put(MediaStore.Audio.Media.IS_RINGTONE, 1)
+//                media_values.put(MediaStore.Audio.Media.IS_RINGTONE, 1)
+//                val newUri: Uri? = resolver.insert(fContUri!!, media_values)
 
 
 //                collection =  MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY); // added in @api<=29 to get the primary external storage
@@ -200,7 +164,7 @@ class RintoneSetter2 {
 
 //                val updated = resolver.update(fContUri, media_values, null, null)
 //                val updated = resolver.update(mediaUri!!, media_values, null, null)
-//                val newUri: Uri? = resolver.insert(mediaUri!!, media_values)
+
 
 
 
@@ -238,6 +202,46 @@ class RintoneSetter2 {
 //    }
 
 
+
+    fun loopCurse(rt_data: Cursor){
+        var rtd_ii = 0
+        while (rtd_ii < rt_data.count) {
+            println("rt data not null")
+            var col_idx = 0;
+            for (col in rt_data.columnNames) {
+
+                val columnKey: String = rt_data.getColumnName(col_idx)
+                println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                println("RT Column name ~ " + columnKey)
+                val rtt = rt_data.getType(col_idx)
+                println("get col type ~ " + rtt.toString())
+                if (rtt == 0) {
+                    val rtv = "null"
+                    println("rt val ~ " + rtv)
+                }
+                if (rtt == 1) {
+                    val rtv = rt_data.getInt(col_idx)
+                    println("rt val ~ " + rtv.toString())
+                }
+                if (rtt == 2) {
+                    val rtv = rt_data.getFloat(col_idx)
+                    println("rt val ~ " + rtv.toString())
+                }
+                if (rtt == 3) {
+                    val rtv = rt_data.getString(col_idx)
+                    println("rt val ~ " + rtv)
+                }
+                if (rtt == 4) {
+                    val rtv = rt_data.getBlob(col_idx)
+                    println("rt val ~ " + rtv.toString())
+                }
+                println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                col_idx += 1
+            }
+            rtd_ii++
+            rt_data.moveToNext()
+        }
+    }
 
     fun getMIMEType(url: String?): String? {
         var mType: String? = null
