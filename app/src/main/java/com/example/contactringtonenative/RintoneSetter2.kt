@@ -62,7 +62,8 @@ class RintoneSetter2 {
                 println("CT Column name ~ " + columnKey)
                 val columnVal = ct_data_test.getString(col_idx)
                 println("CT Col val ~ " + columnVal)
-                if (columnKey == "custom_ringtone"){
+
+                if (columnKey == "custom_ringtone" && columnVal != null){
                     ct_rt_uri = columnVal
                 }
                 col_idx += 1

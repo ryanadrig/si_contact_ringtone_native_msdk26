@@ -6,6 +6,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -45,6 +46,10 @@ class RingtoneMediaUtil {
     // Builds array of paths and type [{"path":"/expath", "type": "default"}, ...
     fun lookForMusicFiles(ms_path: String, rtt: String){
         println("looking in " + ms_path + " for music files")
+        if (!File(ms_path).exists()){
+            println("music file does not exist")
+            return
+        }
         val fileDirMap =
             Files.list( Paths.get(ms_path) )
                 .collect(Collectors.partitioningBy( { it -> Files.isDirectory(it)}))
