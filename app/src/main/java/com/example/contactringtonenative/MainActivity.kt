@@ -33,8 +33,9 @@ class MainActivity : AppCompatActivity() {
 
 //        ContactUpdater().setContactNameByNumber(this)
 
-        RintoneSetter2().setRingtoneByNumber(this)
+//        RintoneSetter2().setRingtoneByNumber(this)
 
+        SICTestMethods().buildContactsList(this)
 
         var mContacts: Cursor
         var mEmail: Cursor
