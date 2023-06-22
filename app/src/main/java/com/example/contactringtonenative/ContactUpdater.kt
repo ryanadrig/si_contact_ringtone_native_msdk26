@@ -28,8 +28,8 @@ class ContactUpdater {
 
         println("lookup contact by number")
 
-        val contact_number = "4445555"
-        val newName = "Some New Name"
+        val contact_number = "6964200"
+        val newName = "NG Set from nd"
         val lookupUri = Uri.withAppendedPath(
             ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
             contact_number
@@ -105,7 +105,11 @@ class ContactUpdater {
                     )
 
                 for (result in results) {
-                    println("Update Result" + result.toString());
+                    println("Contact Name Update Result" + result.toString());
+                    if (result.count!! > 0){
+                        println("result updated")
+                    }
+
                 }
 
                 data.close()

@@ -81,7 +81,7 @@ class RintoneSetter2 {
             if (rt_data!!.count > 0) {
                 println("rtct ~" + rt_data!!.count.toString())
                 rt_data!!.moveToFirst()
-                loopCurse(rt_data)
+                SICCurseUtil().loopCurse(rt_data)
 
                 }
                 rt_data!!.close()
@@ -137,7 +137,7 @@ class RintoneSetter2 {
 
                     mf_data.moveToFirst()
                     println("loop media content media field data")
-                    loopCurse(mf_data)
+                    SICCurseUtil().loopCurse(mf_data)
                 }
 
 
@@ -204,54 +204,9 @@ class RintoneSetter2 {
 
 
 
-    fun loopCurse(rt_data: Cursor){
-        var rtd_ii = 0
-        while (rtd_ii < rt_data.count) {
-            println("rt data not null")
-            var col_idx = 0;
-            for (col in rt_data.columnNames) {
 
-                val columnKey: String = rt_data.getColumnName(col_idx)
-                println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-                println("RT Column name ~ " + columnKey)
-                val rtt = rt_data.getType(col_idx)
-                println("get col type ~ " + rtt.toString())
-                if (rtt == 0) {
-                    val rtv = "null"
-                    println("rt val ~ " + rtv)
-                }
-                if (rtt == 1) {
-                    val rtv = rt_data.getInt(col_idx)
-                    println("rt val ~ " + rtv.toString())
-                }
-                if (rtt == 2) {
-                    val rtv = rt_data.getFloat(col_idx)
-                    println("rt val ~ " + rtv.toString())
-                }
-                if (rtt == 3) {
-                    val rtv = rt_data.getString(col_idx)
-                    println("rt val ~ " + rtv)
-                }
-                if (rtt == 4) {
-                    val rtv = rt_data.getBlob(col_idx)
-                    println("rt val ~ " + rtv.toString())
-                }
-                println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-                col_idx += 1
-            }
-            rtd_ii++
-            rt_data.moveToNext()
-        }
-    }
 
-    fun getMIMEType(url: String?): String? {
-        var mType: String? = null
-        val mExtension = MimeTypeMap.getFileExtensionFromUrl(url)
-        if (mExtension != null) {
-            mType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(mExtension)
-        }
-        return mType
-    }
+
 
 
 //    private fun SetAsRingtone(k: File, resolver: ContentResolver): Boolean {

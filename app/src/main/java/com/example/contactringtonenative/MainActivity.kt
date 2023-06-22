@@ -31,11 +31,13 @@ class MainActivity : AppCompatActivity() {
 
         RingtoneMediaUtil().listMusic(this)
 
+        RingoneSetter3().setRingtone(this)
+
 //        ContactUpdater().setContactNameByNumber(this)
 
 //        RintoneSetter2().setRingtoneByNumber(this)
 
-        SICTestMethods().buildContactsList(this)
+//        SICTestMethods().buildContactsList(this)
 
         var mContacts: Cursor
         var mEmail: Cursor
