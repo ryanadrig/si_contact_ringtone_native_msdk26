@@ -31,13 +31,18 @@ class MainActivity : AppCompatActivity() {
 
         RingtoneMediaUtil().listMusic(this)
 
-        RingoneSetter3().setRingtone(this)
+        println("get all music generic")
+//        RingtoneMediaUtil().getAllMusicRemDups(this)
+
+        RingtoneMediaUtil().getAllRingtones(this)
+
+        RingtoneMediaUtil().getAllMusicAndRTRemDups(this)
 
 //        ContactUpdater().setContactNameByNumber(this)
 
 //        RintoneSetter2().setRingtoneByNumber(this)
 
-//        SICTestMethods().buildContactsList(this)
+        SICTestMethods().buildContactsList(this)
 
         var mContacts: Cursor
         var mEmail: Cursor

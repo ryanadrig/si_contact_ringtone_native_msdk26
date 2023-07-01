@@ -22,6 +22,14 @@ import kotlin.io.path.pathString
 class ContactUpdater {
 
 
+    //LC col idx ~ 2 LC Column name ~ custom_ringtone lc val ~ null
+    //LC col idx ~ 10 LC Column name ~ display_name_alt lc val ~ NG Set from nd
+//    LC col idx ~ 18 LC Column name ~ raw_contact_id lc val ~ 6
+//    LC col idx ~ 28 LC Column name ~ display_name  NG Set from nd
+//    LC col idx ~ 39 LC Column name ~ lc val ~ 10
+//    LC col idx ~ 51 LC Column name ~ contact_id lc val ~ 6
+//    LC col idx ~ 64 LC Column name ~ lookup lc val ~ 0r6-44364E3250344C46424430
+//    LC col idx ~ 73 LC Column name ~ data1 lc val ~ 696-4200
     fun setContactNameByNumber(call_activity: AppCompatActivity) {
         val values = ContentValues()
         val resolver: ContentResolver = call_activity.applicationContext.contentResolver
